@@ -11,7 +11,7 @@ import nltk
 import PyPDF2
 import re
 from nltk.tokenize import word_tokenize
-os.environ["_BARD_API_KEY"] = "egj4eQThgmREP3w-EKvpoAO-gixzxv7le93-fJfwmNjY4-Ac5eNCPS1KFWlgvsZRCBhdDQ."
+os.environ["_BARD_API_KEY"] = "egh54EhFApKTDKog3vBuxi7mwqBzFxuu77xgGhVkL-obiJTFac8NPifxFxh7wsiErjifgg."
 # Download NLTK data
 nltk.download('punkt')
 
@@ -56,12 +56,12 @@ def process_pdf_folder(folder_path):
 
     return documents
 # Specify the folder path where the PDF files are located
-pdf_folder_path = "book"
+pdf_folder_path = "/workspaces/asr_wisper/book"
 
 # Process the PDF folder and get the extracted and cleaned text from each PDF
 extracted_texts = process_pdf_folder(pdf_folder_path)
 # Specify the folder path where the PDF files are located
-pdf_folder_path = "book"
+pdf_folder_path = "/workspaces/asr_wisper/book"
 
 # Process the PDF folder and get the extracted and cleaned text from each PDF
 extracted_texts = process_pdf_folder(pdf_folder_path)
@@ -90,7 +90,7 @@ def main():
     st.title("PDF Text Extraction and Question Answering")
 
     # Sidebar
-    pdf_folder_path = st.sidebar.text_input("Enter PDF Folder Path", "book")
+    pdf_folder_path = st.sidebar.text_input("Enter PDF Folder Path", "/workspaces/asr_wisper/book")
 
     # File upload
     pdf_file = st.sidebar.file_uploader("Upload PDF File", type=["pdf"])
