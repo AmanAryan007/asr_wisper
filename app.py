@@ -6,12 +6,12 @@ from langchain.prompts import ChatPromptTemplate
 from langchain.document_loaders import TextLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.embeddings import SentenceTransformerEmbeddings
+from langchain.vectorstores import Chroma
 import nltk
 import PyPDF2
 import re
 from nltk.tokenize import word_tokenize
-
-os.environ["_BARD_API_KEY"] = "egj4echz57CPHGu2ZLDwrXITFaZ_UzNCBEN03pOIACrPU_dhu3TpCoIxuf-NtIJ0wFhnzw."
+os.environ["_BARD_API_KEY"] = "egh54EhFApKTDKog3vBuxi7mwqBzFxuu77xgGhVkL-obiJTFac8NPifxFxh7wsiErjifgg."
 # Download NLTK data
 nltk.download('punkt')
 
@@ -55,7 +55,11 @@ def process_pdf_folder(folder_path):
         documents.append(cleaned_text)
 
     return documents
+# Specify the folder path where the PDF files are located
+pdf_folder_path = "/workspaces/asr_wisper/book"
 
+# Process the PDF folder and get the extracted and cleaned text from each PDF
+extracted_texts = process_pdf_folder(pdf_folder_path)
 # Specify the folder path where the PDF files are located
 pdf_folder_path = "/workspaces/asr_wisper/book"
 
@@ -69,7 +73,6 @@ output_text = "\n".join(extracted_texts)
 output_file = "documents.txt"
 with open(output_file, "w", encoding="utf-8") as file:
     file.write(output_text)
-
 # Load the documents
 documents = TextLoader('documents.txt').load()
 
@@ -78,14 +81,16 @@ def split_docs(documents, chunk_size=400, chunk_overlap=20):
     docs = text_splitter.split_documents(documents)
     return docs
 
+
 document_chunk = split_docs(documents)
 embeddings = SentenceTransformerEmbeddings(model_name="all-MiniLM-L6-v2")
+db = Chroma.from_documents(document_chunk, embeddings)
 
 def main():
     st.title("PDF Text Extraction and Question Answering")
 
     # Sidebar
-    pdf_folder_path = st.sidebar.text_input("Enter PDF Folder Path", "book")
+    pdf_folder_path = st.sidebar.text_input("Enter PDF Folder Path", "/workspaces/asr_wisper/book")
 
     # File upload
     pdf_file = st.sidebar.file_uploader("Upload PDF File", type=["pdf"])
@@ -113,11 +118,15 @@ def main():
         new_language = st.text_input("Enter the desired language:")
 
         if st.button("Get Answer"):
-            # Here, you can replace the ChromaDB code with your desired logic for answering questions.
-            # For simplicity, I'm using Bard API for answering questions.
-            response = Bard().get_answer(query)['content']
-            st.write("Response:", response)
+            embedding_vector = embeddings.embed_query(query)
+            docs = db.similarity_search_by_vector(embedding_vector)
 
+            if not docs:
+                st.warning("No relevant documents found.")
+            else:
+                message = f"{query}\nanswer on the basis of docs\n{docs}".strip()
+                response = Bard().get_answer(str(message))['content']
+                st.write("Response:", response)
             if change_language:
                 trans_res = f"{response}\ntranslate into {new_language}".strip()
                 translated_response = Bard().get_answer(str(trans_res))['content']
