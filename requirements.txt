@@ -1,0 +1,10 @@
+gradio
+bardapi
+openai
+langchain
+huggingface_hub
+sentence_transformers
+chromadb
+PyPDF2
+nltk
+streamlit
