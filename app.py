@@ -11,7 +11,7 @@ import nltk
 import PyPDF2
 import re
 from nltk.tokenize import word_tokenize
-os.environ["_BARD_API_KEY"] = "egh54EhFApKTDKog3vBuxi7mwqBzFxuu77xgGhVkL-obiJTFac8NPifxFxh7wsiErjifgg."
+os.environ["_BARD_API_KEY"] = "egj4eQGsnxAdSqfTf60UKap2KvdQpNw69QTeaje0ojCm0P2550yCzvb4oFHR78NHV7gTvw."
 # Download NLTK data
 nltk.download('punkt')
 
